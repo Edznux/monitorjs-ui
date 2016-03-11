@@ -3,8 +3,8 @@ var app = angular.module('monitor', [
 	'ngRoute'
 ])
 .constant('apiConfig', {
-	base_url : 'monitor.edznux.fr/api',
-	base_ws : 'monitor.edznux.fr',
+	base_url : window.location.hostname+'/api',
+	base_ws : window.location.hostname,
 	endpointList : {
 		disk : ["all", "fileSystem", "size", "used","use","mounted"],
 		cpu : ["stats", "uptime", "load", "infos"],
@@ -33,8 +33,6 @@ var app = angular.module('monitor', [
 	return $resource("http://"+apiConfig.base_url+"/:route/:item");
 }])
 .factory('WebSocketFactory', ['apiConfig', function(apiConfig){
-	console.log("okok");
-	return new WebSocket("ws://"+apiConfig.base_ws);
 }])
 
 .controller('PageCtrl', function ($scope, $location, $http) {
@@ -42,8 +40,7 @@ var app = angular.module('monitor', [
 })
 
 .controller('CpuCtrl', function ($scope, $location, $http, apiConfig, ApiFactory, WebSocketFactory) {
-	console.log("wtf");
-	var socket = io.connect('http://'+apiConfig.base_url);
+	var socket = io.connect(apiConfig.base_ws, {origins : "*"});
 	socket.on('clients', function(data) {
 		console.log(data);
 	});
